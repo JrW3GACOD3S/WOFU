@@ -5,18 +5,41 @@ function Hero() {
   const [message, setMessage] = useState("")
   const [isError, setIsError] = useState(false)
 
-  const handleQuoteRequest = (event) => {
-    event.preventDefault()
+  const handleQuoteRequest = async (event) => {
+  event.preventDefault()
 
-    if (!productLink.trim()) {
-      setIsError(true)
-      setMessage("Please paste a product link first.")
-      return
+  if (!productLink.trim()) {
+    setIsError(true)
+    setMessage("Please paste a product link first.")
+    return
+  }
+
+  setIsError(false)
+  setMessage("Sending your quote request...")
+
+  try {
+    const response = await fetch("http://localhost:5000/api/quotes", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        productLink,
+      }),
+    })
+
+    const data = await response.json()
+
+    if (!response.ok) {
+      throw new Error(data.message || "Something went wrong.")
     }
 
-    setIsError(false)
-    setMessage("Product link received! Your quote request is ready.")
+    setMessage(data.message)
+  } catch (error) {
+    setIsError(true)
+    setMessage("Unable to send your request. Please try again.")
   }
+}
 
   return (
     <section
