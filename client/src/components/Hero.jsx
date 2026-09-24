@@ -34,7 +34,7 @@ function Hero() {
       throw new Error(data.message || "Something went wrong.")
     }
 
-    setMessage(data.message)
+    setMessage(`${data.message} Your request ID is ${data.requestId}.`)
   } catch (error) {
     setIsError(true)
     setMessage("Unable to send your request. Please try again.")
