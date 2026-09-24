@@ -13,9 +13,21 @@ app.get("/", (req, res) => {
 })
 
 app.post("/api/quotes", async (req, res) => {
-  const { productLink } = req.body
+  const { customerName, customerPhone, productLink } = req.body
 
-  if (!productLink) {
+  if (!customerName?.trim()) {
+    return res.status(400).json({
+      message: "Customer name is required.",
+    })
+  }
+
+  if (!customerPhone?.trim()) {
+    return res.status(400).json({
+      message: "Customer phone number is required.",
+    })
+  }
+
+  if (!productLink?.trim()) {
     return res.status(400).json({
       message: "Product link is required.",
     })
@@ -23,9 +35,12 @@ app.post("/api/quotes", async (req, res) => {
 
   try {
     const quoteRequest = await db.collection("quoteRequests").add({
-      productLink,
+      customerName: customerName.trim(),
+      customerPhone: customerPhone.trim(),
+      productLink: productLink.trim(),
       status: "pending",
       createdAt: new Date(),
+      updatedAt: new Date(),
     })
 
     res.status(201).json({
